@@ -83,11 +83,11 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 500,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xffc14e06), Color(0xffd20f0f)],
-              stops: [0.25, 0.75],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            colors: [Color.fromARGB(255, 234, 100, 16), Color.fromARGB(255, 210, 80, 15)],
+            stops: [0.25, 0.75],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
             shape: BoxShape.circle,
           ),
           child: Padding(
@@ -100,69 +100,100 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _todocard(){
+  Widget _todocard({required int todoId,required String todoTitle,required String todoDesc,required String todoDT,}) {
     return Container(
-      margin: EdgeInsets.all(5),
+      margin: EdgeInsets.all(10),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color.fromARGB(255, 234, 100, 16), Color.fromARGB(255, 210, 80, 15)],
-          stops: [0.25, 0.75],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
+            colors: [Color.fromARGB(255, 229, 100, 19), Color.fromARGB(255, 238, 111, 47)],
+            stops: [0.25, 0.75],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black,
-            blurRadius: 2,
-          )
-        ]
+            color: Color.fromARGB(209, 219, 90, 10).withOpacity(0.3),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ListTile(
-            contentPadding: EdgeInsets.all(10),
-            title: Padding(
-              padding: EdgeInsets.only(bottom: 10),
-              child: Text(todoTitle,
-              style: TextStyle(fontSize: 19),
-              ),
-            ),
-            subtitle: Text(
-              todoDesc,
-              style: TextStyle(fontSize: 19),
+          Padding(
+            padding: EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  todoTitle,
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  todoDesc,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color.fromARGB(255, 0, 0, 0)
+                  ),
+                ),
+              ],
             ),
           ),
           Divider(
-            color: Colors.black,
-            thickness: 0.8,
+            color: const Color.fromARGB(255, 238, 238, 238),
+            thickness: 1.5,
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 3,horizontal: 10),
+            padding: EdgeInsets.all(12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   todoDT,
                   style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                    color: Color.fromARGB(255, 0, 0, 0),
+                    fontSize: 15,
                     fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.w500
                   ),
                 ),
                 InkWell(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>AddUpdateTask(todoId:todoId ,todoTitle:todoTitle ,todoDesc:todoDesc,todoDT: todoDT,update:true )));
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddUpdateTask(
+                          todoId: todoId,
+                          todoTitle: todoTitle,
+                          todoDesc: todoDesc,
+                          todoDT: todoDT,
+                          update: true,
+                        ),
+                      ),
+                    );
                   },
-                  child: Icon(Icons.edit_note,size: 28,color: Colors.green,),
+                  child: Icon(
+                    Icons.edit,
+                    size: 27,
+                    color: Color.fromARGB(255, 1, 110, 79),
+                  ),
                 ),
               ],
             ),
-          )
-        ]
-        ),
-    );                 
+          ),
+        ],
+      ),
+    );
   }
+
 
   Widget _FutuerBuilder(){
     return FutureBuilder(
@@ -188,31 +219,34 @@ class _HomeScreenState extends State<HomeScreen> {
             shrinkWrap: true,
             itemCount: snapshot.data?.length,
             itemBuilder: (context, index) {
-                todoId = snapshot.data![index].id!.toInt();
-                todoTitle = snapshot.data![index].title.toString();
-                todoDesc = snapshot.data![index].desc.toString();
-                todoDT = snapshot.data![index].dateandtime.toString();
+              int todoId = snapshot.data![index].id!.toInt();
+              String todoTitle = snapshot.data![index].title.toString();
+              String todoDesc = snapshot.data![index].desc.toString();
+              String todoDT = snapshot.data![index].dateandtime.toString();
 
-                
-              ///Dismissible
               return Dismissible(
                 key: ValueKey<int>(todoId),
-                direction:DismissDirection.endToStart ,
-                background:ClipRRect(
+                direction: DismissDirection.endToStart,
+                background: ClipRRect(
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
                     color: Color.fromARGB(255, 248, 63, 63),
                     child: Icon(Icons.delete_forever, color: Colors.white),
                   ),
                 ),
-                onDismissed: (DismissDirection direction){
+                onDismissed: (DismissDirection direction) {
                   setState(() {
                     dbHelper!.delete(todoId);
-                    dataList =dbHelper!.getDataList();
+                    dataList = dbHelper!.getDataList();
                     snapshot.data!.remove(snapshot.data![index]);
                   });
                 },
-                child: _todocard()
+                child: _todocard(
+                  todoId: todoId,
+                  todoTitle: todoTitle,
+                  todoDesc: todoDesc,
+                  todoDT: todoDT,
+                ),
               );
             },
           );

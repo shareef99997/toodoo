@@ -218,9 +218,7 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
                 return null;
               },
             ),
-          ),
-
-          
+          ),        
           SizedBox(height: 50),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -284,78 +282,65 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
   
   /////////// Buttons Widget ///////////
   Widget _Buttons() {
-  return Container(
-    width: MediaQuery.of(context).size.width,
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        // Submit Button
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            primary: Color.fromARGB(255, 105, 163, 4),
-            onPrimary: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color.fromARGB(255, 214, 85, 5), Color.fromARGB(255, 238, 111, 47)],
+                stops: [0.25, 0.75],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Color.fromARGB(255, 234, 100, 16), // Use the same color as the gradient
+                onPrimary: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              onPressed: () {
+                if (_fromKey.currentState!.validate()) {
+                  if (widget.update == true) {
+                    dbHelper!.update(TodoModel(
+                      id: widget.todoId,
+                      title: titleController.text,
+                      desc: descController.text,
+                      dateandtime: DateFormat('yMd').add_jm().format(selectedDateTime).toString(),
+                    ));
+                  } else {
+                    dbHelper!.insert(TodoModel(
+                      title: titleController.text,
+                      desc: descController.text,
+                      dateandtime: DateFormat('yMd').add_jm().format(selectedDateTime).toString(),
+                    ));
+                  }
+                  Navigator.pushAndRemoveUntil(
+                      context, MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
+                  titleController.clear();
+                  descController.clear();
+                  print("data added");
+                }
+              },
+              child: Container(
+                alignment: Alignment.center,
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                height: 55,
+                width: 260,
+                child: Text("Submit", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              ),
             ),
           ),
-          onPressed: () {
-            if (_fromKey.currentState!.validate()) {
-              if (widget.update == true) {
-                dbHelper!.update(TodoModel(
-                  id: widget.todoId,
-                  title: titleController.text,
-                  desc: descController.text,
-                  dateandtime: DateFormat('yMd').add_jm().format(selectedDateTime).toString(),
-                ));
-              } else {
-                dbHelper!.insert(TodoModel(
-                  title: titleController.text,
-                  desc: descController.text,
-                  dateandtime: DateFormat('yMd').add_jm().format(selectedDateTime).toString(),
-                ));
-              }
-              Navigator.pushAndRemoveUntil(
-                  context, MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
-              titleController.clear();
-              descController.clear();
-              print("data added");
-            }
-          },
-          child: Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            height: 55,
-            width: 120,
-            child: Text("Submit", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-          ),
-        ),
+        ],
+      ),
 
-        // Clear Button
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            primary: Color.fromARGB(255, 193, 5, 5),
-            onPrimary: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(30),
-            ),
-          ),
-          onPressed: () {
-            setState(() {
-              titleController.clear();
-              descController.clear();
-            });
-          },
-          child: Container(
-            alignment: Alignment.center,
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            height: 55,
-            width: 120,
-            child: Text("Clear", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-          ),
-        )
-      ],
-    ),
-  );
-}
+    );
+ }
 
 }
