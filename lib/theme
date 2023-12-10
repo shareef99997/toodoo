@@ -1,0 +1,8 @@
+Main Color : Color.fromARGB(255, 241, 135, 13)
+ backgroundColor: Color.fromARGB(255, 53, 49, 45),
+  gradient: LinearGradient(
+          colors: [Color.fromARGB(255, 234, 100, 16), Color.fromARGB(255, 210, 80, 15)],
+          stops: [0.25, 0.75],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),

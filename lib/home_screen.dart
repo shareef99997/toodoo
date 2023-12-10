@@ -43,98 +43,60 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 45, 38, 34),
       appBar: AppBar(
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               "Too",
               style: TextStyle(
-                  fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 1,color: Color.fromARGB(255, 241, 135, 13)),
+                  fontSize: 25, fontWeight: FontWeight.w900, letterSpacing: 1,color: Color.fromARGB(255, 241, 135, 13)),
             ),
             Text(
               "Doo",
               style: TextStyle(
-                  fontSize: 22, fontWeight: FontWeight.w500, letterSpacing: 1),
+                  fontSize: 25, fontWeight: FontWeight.w500, letterSpacing: 1,color: Color.fromARGB(235, 255, 255, 255)),
             ),
           ],
         ),
-        centerTitle: true,
         elevation: 0,
-        actions: [
-          Padding(
-              padding: EdgeInsets.only(right: 10),
-              child: Icon(
-                Icons.help_outline_rounded,
-                size: 30,
-              )
-              )
-        ],
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Column(
         children: [
           Expanded(
-            child: FutureBuilder(
-              future: dataList,
-              builder: (context,AsyncSnapshot<List<TodoModel>> snapshot){
-                if(!snapshot.hasData || snapshot.data == null){
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                else if(snapshot.data!.length == 0){
-                  return Center(
-                    child: Text("No Tasks Found",
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 3, 3, 3)
-                      ),
-                    ),
-                  );
-                }else{
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.data?.length,
-                    itemBuilder: (context, index) {
-                      
-                        todoId = snapshot.data![index].id!.toInt();
-                        todoTitle = snapshot.data![index].title.toString();
-                        todoDesc = snapshot.data![index].desc.toString();
-                        todoDT = snapshot.data![index].dateandtime.toString();
-                      
-                      
-                      return Dismissible(
-                        key: ValueKey<int>(todoId),
-                        direction:DismissDirection.endToStart ,
-                        background: Container(
-                          color: Colors.redAccent,
-                          child: Icon(Icons.delete_forever, color: Colors.white),
-                        ),
-                        onDismissed: (DismissDirection direction){
-                          setState(() {
-                            dbHelper!.delete(todoId);
-                            dataList =dbHelper!.getDataList();
-                            snapshot.data!.remove(snapshot.data![index]);
-                          });
-                        },
-                        child: _todocard()
-                      );
-                    },
-                  );
-                }
-              },
-            )
+            child: _FutuerBuilder(),
           )
         ],
       ),
       floatingActionButton:FloatingActionButton(
-        backgroundColor: Colors.green,
-        child: Icon(Icons.add),
         onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=> AddUpdateTask(),
-          ));
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddUpdateTask()),
+          );
         },
-        ) ,
+        backgroundColor: Colors.transparent, // Set the color to transparent
+        child: Container(
+          width: 500,
+          height: 500,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xffc14e06), Color(0xffd20f0f)],
+              stops: [0.25, 0.75],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            shape: BoxShape.circle,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Icon(Icons.add, color: Colors.white),
+          ),
+        ),
+      ),
+
     );
   }
 
@@ -142,12 +104,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       margin: EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 244, 156, 73),
+        gradient: LinearGradient(
+          colors: [Color.fromARGB(255, 234, 100, 16), Color.fromARGB(255, 210, 80, 15)],
+          stops: [0.25, 0.75],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: Colors.black,
-            blurRadius: 4,
-            spreadRadius: 1,
+            blurRadius: 2,
           )
         ]
       ),
@@ -197,5 +164,60 @@ class _HomeScreenState extends State<HomeScreen> {
     );                 
   }
 
+  Widget _FutuerBuilder(){
+    return FutureBuilder(
+      future: dataList,
+      builder: (context,AsyncSnapshot<List<TodoModel>> snapshot){
+        if(!snapshot.hasData || snapshot.data == null){
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        else if(snapshot.data!.length == 0){
+          return Center(
+            child: Text("No Tasks Found",
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: const Color.fromARGB(255, 3, 3, 3)
+              ),
+            ),
+          );
+        }else{
+          return ListView.builder(
+            shrinkWrap: true,
+            itemCount: snapshot.data?.length,
+            itemBuilder: (context, index) {
+                todoId = snapshot.data![index].id!.toInt();
+                todoTitle = snapshot.data![index].title.toString();
+                todoDesc = snapshot.data![index].desc.toString();
+                todoDT = snapshot.data![index].dateandtime.toString();
 
+                
+              ///Dismissible
+              return Dismissible(
+                key: ValueKey<int>(todoId),
+                direction:DismissDirection.endToStart ,
+                background:ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    color: Color.fromARGB(255, 248, 63, 63),
+                    child: Icon(Icons.delete_forever, color: Colors.white),
+                  ),
+                ),
+                onDismissed: (DismissDirection direction){
+                  setState(() {
+                    dbHelper!.delete(todoId);
+                    dataList =dbHelper!.getDataList();
+                    snapshot.data!.remove(snapshot.data![index]);
+                  });
+                },
+                child: _todocard()
+              );
+            },
+          );
+        }
+      },
+    );
+  }
 }

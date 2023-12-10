@@ -50,6 +50,17 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
           initialDate: selectedDateTime,
           firstDate: DateTime.now(),
           lastDate: DateTime(2101),
+          builder: (BuildContext context, Widget? child) {
+            return Theme(
+              data: ThemeData.dark().copyWith(
+                primaryColor: Color.fromARGB(255, 241, 135, 13), // Your custom color
+                hintColor: Color.fromARGB(255, 241, 135, 13), // Your custom color
+                colorScheme: ColorScheme.dark(primary: Color.fromARGB(255, 241, 135, 13)), // Your custom color
+                buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+              ),
+              child: child!,
+            );
+    },
         );
         if (picked != null && picked != selectedDateTime)
           setState(() {
@@ -68,18 +79,31 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
       final TimeOfDay? picked = await showTimePicker(
         context: context,
         initialTime: TimeOfDay.fromDateTime(selectedDateTime),
-      );
-      if (picked != null)
-        setState(() {
-          selectedDateTime = DateTime(
-            selectedDateTime.year,
-            selectedDateTime.month,
-            selectedDateTime.day,
-            picked.hour,
-            picked.minute,
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData.dark().copyWith(
+              primaryColor: Color.fromARGB(255, 241, 135, 13), // Your custom color
+              hintColor: Color.fromARGB(255, 241, 135, 13), // Your custom color
+              colorScheme: ColorScheme.dark(primary: Color.fromARGB(255, 241, 135, 13)), // Your custom color
+              buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+            ),
+            child: child!,
           );
-        });
-    }
+        },
+      );
+
+  if (picked != null) {
+    setState(() {
+      selectedDateTime = DateTime(
+        selectedDateTime.year,
+        selectedDateTime.month,
+        selectedDateTime.day,
+        picked.hour,
+        picked.minute,
+      );
+    });
+  }
+}
 
   /////////////////////Functions/////////////////////
   
@@ -103,10 +127,12 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromARGB(255, 53, 49, 45),
       appBar: AppBar(
         title: Text(appTitle,style: TextStyle( fontSize: 22,fontWeight: FontWeight.w900,letterSpacing: 1,color: Color.fromARGB(255, 241, 135, 13),),),
         centerTitle: true,
         elevation: 0,
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: Padding(
         padding: EdgeInsets.only(top: 20),
@@ -115,7 +141,7 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
             children: [
               //Form Function
               _buildForm(),
-              SizedBox(height: 40),
+              SizedBox(height: 220),
               //Buttons Function
               _Buttons()
             ],
@@ -125,15 +151,6 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
     );
   }  
   
-
-
-
-
-
-
-
-
-
 
   //////////// Form Widget ////////////
   Widget _buildForm() {
@@ -147,9 +164,23 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
               keyboardType: TextInputType.multiline,
               controller: titleController,
               maxLines: null,
+              style: TextStyle(fontSize: 18, color: Colors.white), // Adjust the font size as needed
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white, width: 2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white, width: 4),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 hintText: "Note Title",
+                hintStyle: TextStyle(color: Colors.grey[400]),
+                prefixIcon: Icon(
+                  Icons.title, // Replace with your desired icon
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
@@ -161,9 +192,24 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
               controller: descController,
               maxLines: null,
               minLines: 5,
+              style: TextStyle(fontSize: 16, color: Colors.white), // Adjust the font size as needed
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white, width: 2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white, width: 4,),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 hintText: "Description",
+                hintStyle: TextStyle(color: Colors.grey[400]),
+                errorStyle: TextStyle(fontSize: 14), // Adjust error text size
+                prefixIcon: Icon(
+                  Icons.description, // Replace with your desired icon
+                  color: Colors.white,
+                ),
               ),
               validator: (value) {
                 if (value!.isEmpty) {
@@ -173,15 +219,63 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
               },
             ),
           ),
-          SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () => _selectDate(context),
-            child: Text('Select Date'),
-          ),
-          SizedBox(height: 10),
-          ElevatedButton(
-            onPressed: () => _selectTime(context),
-            child: Text('Select Time'),
+
+          
+          SizedBox(height: 50),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              //Date and Time
+              Container(
+                width: 100,
+                height: 60,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color.fromARGB(255, 214, 85, 5), Color.fromARGB(255, 238, 111, 47)],
+                    stops: [0.25, 0.75],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Material(
+                  color: Colors.transparent, // Set the color to transparent
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(30),
+                    onTap: () => _selectDate(context),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Icon(Icons.calendar_month_outlined,color: Colors.white,),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Container(
+                width: 100,
+                height: 60,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Color.fromARGB(255, 214, 85, 5), Color.fromARGB(255, 238, 111, 47)],
+                    stops: [0.25, 0.75],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Material(
+                  color: Colors.transparent, // Set the color to transparent
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(10),
+                    onTap: () => _selectTime(context),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Icon(Icons.timer_sharp,color: Colors.white,),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -189,74 +283,79 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
   }
   
   /////////// Buttons Widget ///////////
-  Widget _Buttons(){
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          // Submit Button
-          Material(
-            color: Colors.green,
-            borderRadius: BorderRadius.circular(10),
-            child: InkWell(
-              onTap: () {
-                if (_fromKey.currentState!.validate()) {
-                  if (widget.update == true) {
-                    dbHelper!.update(TodoModel(
-                      id: widget.todoId,
-                      title: titleController.text,
-                      desc: descController.text,
-                      dateandtime: DateFormat('yMd').add_jm().format(selectedDateTime).toString(),
-                    ));
-                  } else {
-                    dbHelper!.insert(TodoModel(
-                      title: titleController.text,
-                      desc: descController.text,
-                      dateandtime: DateFormat('yMd').add_jm().format(selectedDateTime).toString(),
-                    ));
-                  }
-                  Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => HomeScreen()),(route) => false); 
-                  titleController.clear();
-                  descController.clear();
-                  print("data added");
-                }
-              },
-              child: Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                height: 55,
-                width: 120,
-                decoration: BoxDecoration(),
-                child: Text("Submit", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white)),
-              ),
+  Widget _Buttons() {
+  return Container(
+    width: MediaQuery.of(context).size.width,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        // Submit Button
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Color.fromARGB(255, 105, 163, 4),
+            onPrimary: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
             ),
           ),
-          // Clear Button
-          Material(
-            color: Color.fromARGB(255, 200, 1, 1),
-            borderRadius: BorderRadius.circular(10),
-            child: InkWell(
-              onTap: () {
-                setState(() {
-                  titleController.clear();
-                  descController.clear();
-                });
-              },
-              child: Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.symmetric(horizontal: 20),
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                height: 55,
-                width: 120,
-                decoration: BoxDecoration(),
-                child: Text("Clear", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white)),
-              ),
+          onPressed: () {
+            if (_fromKey.currentState!.validate()) {
+              if (widget.update == true) {
+                dbHelper!.update(TodoModel(
+                  id: widget.todoId,
+                  title: titleController.text,
+                  desc: descController.text,
+                  dateandtime: DateFormat('yMd').add_jm().format(selectedDateTime).toString(),
+                ));
+              } else {
+                dbHelper!.insert(TodoModel(
+                  title: titleController.text,
+                  desc: descController.text,
+                  dateandtime: DateFormat('yMd').add_jm().format(selectedDateTime).toString(),
+                ));
+              }
+              Navigator.pushAndRemoveUntil(
+                  context, MaterialPageRoute(builder: (context) => HomeScreen()), (route) => false);
+              titleController.clear();
+              descController.clear();
+              print("data added");
+            }
+          },
+          child: Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: 55,
+            width: 120,
+            child: Text("Submit", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          ),
+        ),
+
+        // Clear Button
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            primary: Color.fromARGB(255, 193, 5, 5),
+            onPrimary: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(30),
             ),
           ),
-        ],
-      ),
-    );
-  }
+          onPressed: () {
+            setState(() {
+              titleController.clear();
+              descController.clear();
+            });
+          },
+          child: Container(
+            alignment: Alignment.center,
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            height: 55,
+            width: 120,
+            child: Text("Clear", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          ),
+        )
+      ],
+    ),
+  );
+}
+
 }
