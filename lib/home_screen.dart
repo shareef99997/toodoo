@@ -14,20 +14,31 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
+  /////////////Declerations////////////////
   DBHelper? dbHelper;
+  late Future<List<TodoModel>> dataList;  
+  late int todoId;
+  String todoTitle ='';
+  String todoDesc='';
+  String todoDT='';
+  /////////////Declerations////////////////
   
-  late Future<List<TodoModel>> dataList;
-
+  /////////////////////Functions/////////////////////
+  loadData() async{
+    dataList = dbHelper!.getDataList();
+  }
+  
+  /////////////////////Functions/////////////////////
+  
+  ////////////Init State////////////
   @override
   void initState() {
     super.initState();
     dbHelper = DBHelper();
     loadData();
   }
+  ////////////Init State////////////
 
-  loadData() async{
-    dataList = dbHelper!.getDataList();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,10 +96,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     shrinkWrap: true,
                     itemCount: snapshot.data?.length,
                     itemBuilder: (context, index) {
-                      int todoId = snapshot.data![index].id!.toInt();
-                      String todoTitle = snapshot.data![index].title.toString();
-                      String todoDesc = snapshot.data![index].desc.toString();
-                      String todoDT = snapshot.data![index].dateandtime.toString();
+                      
+                        todoId = snapshot.data![index].id!.toInt();
+                        todoTitle = snapshot.data![index].title.toString();
+                        todoDesc = snapshot.data![index].desc.toString();
+                        todoDT = snapshot.data![index].dateandtime.toString();
+                      
+                      
                       return Dismissible(
                         key: ValueKey<int>(todoId),
                         direction:DismissDirection.endToStart ,
@@ -103,62 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             snapshot.data!.remove(snapshot.data![index]);
                           });
                         },
-                        child: Container(
-                          margin: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 244, 156, 73),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black,
-                                blurRadius: 4,
-                                spreadRadius: 1,
-                              )
-                            ]
-                          ),
-                          child: Column(
-                            children: [
-                              ListTile(
-                                contentPadding: EdgeInsets.all(10),
-                                title: Padding(
-                                  padding: EdgeInsets.only(bottom: 10),
-                                  child: Text(todoTitle,
-                                  style: TextStyle(fontSize: 19),
-                                  ),
-                                ),
-                                subtitle: Text(
-                                  todoDesc,
-                                  style: TextStyle(fontSize: 19),
-                                ),
-                              ),
-                              Divider(
-                                color: Colors.black,
-                                thickness: 0.8,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 3,horizontal: 10),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      todoDT,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        fontStyle: FontStyle.italic,
-                                      ),
-                                    ),
-                                    InkWell(
-                                      onTap: (){
-                                        Navigator.push(context, MaterialPageRoute(builder: (context)=>AddUpdateTask(todoId:todoId ,todoTitle:todoTitle ,todoDesc:todoDesc,todoDT: todoDT,update:true )));
-                                      },
-                                      child: Icon(Icons.edit_note,size: 28,color: Colors.green,),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ]
-                            ),
-                        )
+                        child: _todocard()
                       );
                     },
                   );
@@ -178,4 +137,65 @@ class _HomeScreenState extends State<HomeScreen> {
         ) ,
     );
   }
+
+  Widget _todocard(){
+    return Container(
+      margin: EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: Color.fromARGB(255, 244, 156, 73),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black,
+            blurRadius: 4,
+            spreadRadius: 1,
+          )
+        ]
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            contentPadding: EdgeInsets.all(10),
+            title: Padding(
+              padding: EdgeInsets.only(bottom: 10),
+              child: Text(todoTitle,
+              style: TextStyle(fontSize: 19),
+              ),
+            ),
+            subtitle: Text(
+              todoDesc,
+              style: TextStyle(fontSize: 19),
+            ),
+          ),
+          Divider(
+            color: Colors.black,
+            thickness: 0.8,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 3,horizontal: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  todoDT,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+                InkWell(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>AddUpdateTask(todoId:todoId ,todoTitle:todoTitle ,todoDesc:todoDesc,todoDT: todoDT,update:true )));
+                  },
+                  child: Icon(Icons.edit_note,size: 28,color: Colors.green,),
+                ),
+              ],
+            ),
+          )
+        ]
+        ),
+    );                 
+  }
+
+
 }

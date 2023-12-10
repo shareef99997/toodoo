@@ -37,44 +37,51 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
   /////////////Declerations////////////////
 
 
-  //Functions/
-  //Date Widget
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDateTime,
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != selectedDateTime)
-      setState(() {
-        selectedDateTime = DateTime(
-          picked.year,
-          picked.month,
-          picked.day,
-          selectedDateTime.hour,
-          selectedDateTime.minute,
-        );
-      });
+  /////////////////////Functions/////////////////////
+    //Load Data
+    loadData() async {
+    dataList = dbHelper!.getDataList();
   }
-  //Time Widget
-  Future<void> _selectTime(BuildContext context) async {
-  final TimeOfDay? picked = await showTimePicker(
-    context: context,
-    initialTime: TimeOfDay.fromDateTime(selectedDateTime),
-  );
-  if (picked != null)
-    setState(() {
-      selectedDateTime = DateTime(
-        selectedDateTime.year,
-        selectedDateTime.month,
-        selectedDateTime.day,
-        picked.hour,
-        picked.minute,
+    
+    //Date Widget
+    Future<void> _selectDate(BuildContext context) async {
+        final DateTime? picked = await showDatePicker(
+          context: context,
+          initialDate: selectedDateTime,
+          firstDate: DateTime.now(),
+          lastDate: DateTime(2101),
+        );
+        if (picked != null && picked != selectedDateTime)
+          setState(() {
+            selectedDateTime = DateTime(
+              picked.year,
+              picked.month,
+              picked.day,
+              selectedDateTime.hour,
+              selectedDateTime.minute,
+            );
+          });
+      }
+    
+    //Time Widget
+    Future<void> _selectTime(BuildContext context) async {
+      final TimeOfDay? picked = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.fromDateTime(selectedDateTime),
       );
-    });
- }
+      if (picked != null)
+        setState(() {
+          selectedDateTime = DateTime(
+            selectedDateTime.year,
+            selectedDateTime.month,
+            selectedDateTime.day,
+            picked.hour,
+            picked.minute,
+          );
+        });
+    }
 
+  /////////////////////Functions/////////////////////
   
   ////////////Init State////////////
   @override
@@ -92,26 +99,12 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
     }
   }
   ////////////Init State////////////
-  loadData() async {
-    dataList = dbHelper!.getDataList();
-  }
 
   @override
   Widget build(BuildContext context) {
-
-    
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          appTitle,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1,
-            color: Color.fromARGB(255, 241, 135, 13),
-          ),
-        ),
+        title: Text(appTitle,style: TextStyle( fontSize: 22,fontWeight: FontWeight.w900,letterSpacing: 1,color: Color.fromARGB(255, 241, 135, 13),),),
         centerTitle: true,
         elevation: 0,
       ),
@@ -120,77 +113,11 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              //Form Function
               _buildForm(),
               SizedBox(height: 40),
-              Container(
-                width: MediaQuery.of(context).size.width,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    // Submit Button
-                    Material(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(10),
-                      child: InkWell(
-                        onTap: () {
-                          if (_fromKey.currentState!.validate()) {
-                            if (widget.update == true) {
-                              dbHelper!.update(TodoModel(
-                                id: widget.todoId,
-                                title: titleController.text,
-                                desc: descController.text,
-                                dateandtime: DateFormat('yMd').add_jm().format(selectedDateTime).toString(),
-                              ));
-                            } else {
-                              dbHelper!.insert(TodoModel(
-                                title: titleController.text,
-                                desc: descController.text,
-                                dateandtime: DateFormat('yMd').add_jm().format(selectedDateTime).toString(),
-                              ));
-                            }
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => HomeScreen()));
-                            titleController.clear();
-                            descController.clear();
-                            print("data added");
-                          }
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          height: 55,
-                          width: 120,
-                          decoration: BoxDecoration(),
-                          child: Text("Submit", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white)),
-                        ),
-                      ),
-                    ),
-
-                    // Clear Button
-                    Material(
-                      color: Color.fromARGB(255, 200, 1, 1),
-                      borderRadius: BorderRadius.circular(10),
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            titleController.clear();
-                            descController.clear();
-                          });
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.symmetric(horizontal: 20),
-                          padding: EdgeInsets.symmetric(horizontal: 10),
-                          height: 55,
-                          width: 120,
-                          decoration: BoxDecoration(),
-                          child: Text("Clear", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              //Buttons Function
+              _Buttons()
             ],
           ),
         ),
@@ -208,7 +135,7 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
 
 
 
-  //////////// Form widget ////////////
+  //////////// Form Widget ////////////
   Widget _buildForm() {
     return Form(
       key: _fromKey,
@@ -260,5 +187,76 @@ class _AddUpdateTaskState extends State<AddUpdateTask> {
       ),
     );
   }
-
+  
+  /////////// Buttons Widget ///////////
+  Widget _Buttons(){
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          // Submit Button
+          Material(
+            color: Colors.green,
+            borderRadius: BorderRadius.circular(10),
+            child: InkWell(
+              onTap: () {
+                if (_fromKey.currentState!.validate()) {
+                  if (widget.update == true) {
+                    dbHelper!.update(TodoModel(
+                      id: widget.todoId,
+                      title: titleController.text,
+                      desc: descController.text,
+                      dateandtime: DateFormat('yMd').add_jm().format(selectedDateTime).toString(),
+                    ));
+                  } else {
+                    dbHelper!.insert(TodoModel(
+                      title: titleController.text,
+                      desc: descController.text,
+                      dateandtime: DateFormat('yMd').add_jm().format(selectedDateTime).toString(),
+                    ));
+                  }
+                  Navigator.pushAndRemoveUntil(context,MaterialPageRoute(builder: (context) => HomeScreen()),(route) => false); 
+                  titleController.clear();
+                  descController.clear();
+                  print("data added");
+                }
+              },
+              child: Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                height: 55,
+                width: 120,
+                decoration: BoxDecoration(),
+                child: Text("Submit", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white)),
+              ),
+            ),
+          ),
+          // Clear Button
+          Material(
+            color: Color.fromARGB(255, 200, 1, 1),
+            borderRadius: BorderRadius.circular(10),
+            child: InkWell(
+              onTap: () {
+                setState(() {
+                  titleController.clear();
+                  descController.clear();
+                });
+              },
+              child: Container(
+                alignment: Alignment.center,
+                margin: EdgeInsets.symmetric(horizontal: 20),
+                padding: EdgeInsets.symmetric(horizontal: 10),
+                height: 55,
+                width: 120,
+                decoration: BoxDecoration(),
+                child: Text("Clear", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.white)),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
