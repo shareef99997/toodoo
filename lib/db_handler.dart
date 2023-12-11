@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, depend_on_referenced_packages
+
 import 'dart:io'as io;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';

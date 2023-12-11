@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, avoid_print, deprecated_member_use, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, non_constant_identifier_names, use_key_in_widget_constructors, curly_braces_in_flow_control_structures, must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:toodoo/db_handler.dart';

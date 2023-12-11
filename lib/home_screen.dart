@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_is_empty, non_constant_identifier_names, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
 import 'package:toodoo/add_update_screen.dart';
 import 'package:toodoo/db_handler.dart';
