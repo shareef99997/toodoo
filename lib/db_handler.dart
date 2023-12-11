@@ -32,7 +32,7 @@ class DBHelper{
   _createDatabase(Database db , int version) async{
     
     await db.execute(
-      "CREATE TABLE mytodo(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, desc TEXT NOT NULL,dateandtime TEXT NOT NULL,color INTEGER NOT NULL)",
+      "CREATE TABLE mytodo(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL, desc TEXT NOT NULL,dateandtime TEXT NOT NULL)",
     );
   }
 
